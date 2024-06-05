@@ -61,3 +61,23 @@ class InventoryModel:
             query = "UPDATE products SET quantity = ? WHERE id = ?"
             self.conn.execute(query, (new_quantity, product_id))
             self.conn.commit()
+
+    def delete_product(self, name):
+        query = "DELETE FROM products WHERE name = ?"
+        self.conn.execute(query, (name,))
+        self.conn.commit()
+
+    def delete_product_by_id(self, product_id):
+        query = "DELETE FROM products WHERE id = ?"
+        self.conn.execute(query, (product_id,))
+        self.conn.commit()
+
+    def get_product_by_id(self, product_id):
+        query = "SELECT * FROM products WHERE id = ?"
+        cursor = self.conn.execute(query, (product_id,))
+        return cursor.fetchone()
+
+    def get_all_products(self):
+        query = "SELECT * FROM products"
+        cursor = self.conn.execute(query)
+        return cursor.fetchall()
