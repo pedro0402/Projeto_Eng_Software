@@ -1,4 +1,5 @@
-
+import customtkinter as ctk
+from tkinter import messagebox
 
 class InventoryView(ctk.CTk):
     def __init__(self, controller):
