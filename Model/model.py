@@ -34,3 +34,30 @@ class InventoryModel:
         cursor = self.conn.execute(query, (name,))
         return cursor.fetchone()
 
+    def add_product(self, name, quantity, sector):
+        product = self.get_product_by_name(name)
+        if product:
+            new_quantity = product[2] + quantity
+            query = "UPDATE products SET quantity = ? WHERE name = ?"
+            self.conn.execute(query, (new_quantity, name))
+        else:
+            product_id = self.generate_unique_id()
+            query = "INSERT INTO products (id, name, quantity, sector) VALUES (?, ?, ?, ?)"
+            self.conn.execute(query, (product_id, name, quantity, sector))
+        self.conn.commit()
+
+    def subtract_product_quantity(self, name, quantity):
+        product = self.get_product_by_name(name)
+        if product:
+            new_quantity = max(product[2] - quantity, 0)
+            query = "UPDATE products SET quantity = ? WHERE name = ?"
+            self.conn.execute(query, (new_quantity, name))
+            self.conn.commit()
+
+    def subtract_product_quantity_by_id(self, product_id, quantity):
+        product = self.get_product_by_id(product_id)
+        if product:
+            new_quantity = max(product[2] - quantity, 0)
+            query = "UPDATE products SET quantity = ? WHERE id = ?"
+            self.conn.execute(query, (new_quantity, product_id))
+            self.conn.commit()
