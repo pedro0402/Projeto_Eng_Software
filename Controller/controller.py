@@ -102,6 +102,14 @@ class InventoryController:
     def get_product_by_name(self, name):
         return self.model.get_product_by_name(name)
     
+    def get_product_addition_history(self):
+        return self.model.get_product_addition_history()
+    
+    def get_history(self):
+        return self.model.get_product_addition_history()
+    
+    def export_excel(self, file_path):
+        return self.model.export_to_excel(file_path)
     
     def run(self):
         """Inicia interface gráfica"""
