@@ -187,3 +187,4 @@ class InventoryView(ctk.CTk):
     def clear_screen(self):
         for widget in self.winfo_children():
             widget.destroy()
+            
