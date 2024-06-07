@@ -93,6 +93,15 @@ class InventoryController:
         except Exception as e:
             self.logger.error(f"Erro ao recuperar produtos: {e}")
             return "Erro ao recuperar"
+        
+
+    def get_product_by_id(self, product_id):
+        return self.model.get_product_by_id(product_id)
+    
+    
+    def get_product_by_name(self, name):
+        return self.model.get_product_by_name(name)
+    
     
     def run(self):
         """Inicia interface gráfica"""
