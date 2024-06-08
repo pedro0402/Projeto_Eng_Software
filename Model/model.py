@@ -1,6 +1,5 @@
 import sqlite3
 import random
-from datetime import datetime
 import pandas as pd
 
 class InventoryModel:
@@ -19,20 +18,6 @@ class InventoryModel:
         """
         self.conn.execute(query)
         self.conn.commit()
-        
-        # Adiciona uma tabela para registrar o histórico de adições
-        query = """
-        CREATE TABLE IF NOT EXISTS history (
-            id INTEGER PRIMARY KEY,
-            product_id INTEGER NOT NULL,
-            operation TEXT NOT NULL,
-            timestamp TEXT NOT NULL
-        )
-        """
-        self.conn.execute(query)
-        self.conn.commit()
-
-
 
     def generate_unique_id(self):
         while True:
@@ -53,32 +38,21 @@ class InventoryModel:
     def add_product(self, name, quantity, sector):
         product = self.get_product_by_name(name)
         if product:
-            new_quantity = product[2] + quantity
-            query = "UPDATE products SET quantity = ? WHERE name = ?"
-            self.conn.execute(query, (new_quantity, name))
+            # Verifica se já existe um produto com o mesmo nome em um setor diferente
+            if product[3] != sector:
+                product_id = self.generate_unique_id()  # Gera um novo ID único
+                query = "INSERT INTO products (id, name, quantity, sector) VALUES (?, ?, ?, ?)"
+                self.conn.execute(query, (product_id, name, quantity, sector))
+            else:
+                new_quantity = product[2] + quantity
+                query = "UPDATE products SET quantity = ? WHERE name = ?"
+                self.conn.execute(query, (new_quantity, name))
         else:
             product_id = self.generate_unique_id()
             query = "INSERT INTO products (id, name, quantity, sector) VALUES (?, ?, ?, ?)"
             self.conn.execute(query, (product_id, name, quantity, sector))
-        
-        # Registra a operação de adição no histórico
-        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        query = "INSERT INTO history (product_id, operation, timestamp) VALUES (?, ?, ?)"
-        self.conn.execute(query, (product_id, "Adição", timestamp))
         self.conn.commit()
 
-    def get_product_addition_history(self):
-        query = "SELECT * FROM history WHERE operation = 'Adição'"
-        cursor = self.conn.execute(query)
-        return cursor.fetchall()
-
-    def subtract_product_quantity(self, name, quantity):
-        product = self.get_product_by_name(name)
-        if product:
-            new_quantity = max(product[2] - quantity, 0)
-            query = "UPDATE products SET quantity = ? WHERE name = ?"
-            self.conn.execute(query, (new_quantity, name))
-            self.conn.commit()
 
     def subtract_product_quantity_by_id(self, product_id, quantity):
         product = self.get_product_by_id(product_id)
