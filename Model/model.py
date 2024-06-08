@@ -87,4 +87,10 @@ class InventoryModel:
         data = pd.read_sql(query, self.conn)
         data.to_excel(file_path, index=False)
 
+    def get_all_sectors(self):
+        query = "SELECT DISTINCT sector FROM products"
+        cursor = self.conn.execute(query)
+        sectors = [row[0] for row in cursor.fetchall()]
+        return sectors
+
 inventory = InventoryModel()
