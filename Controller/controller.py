@@ -1,10 +1,9 @@
-import logging
 from Model.model import InventoryModel
 from View.view import InventoryView
+import logging
+
 
 class InventoryController:
-
-   
     def __init__(self, model=None, view=None):
          
         """Inicializa o controlador, conectando o modelo e a visão.
@@ -93,20 +92,11 @@ class InventoryController:
         except Exception as e:
             self.logger.error(f"Erro ao recuperar produtos: {e}")
             return "Erro ao recuperar"
-        
+
 
     def get_product_by_id(self, product_id):
         return self.model.get_product_by_id(product_id)
     
-    
-    def get_product_by_name(self, name):
-        return self.model.get_product_by_name(name)
-    
-    def get_product_addition_history(self):
-        return self.model.get_product_addition_history()
-    
-    def get_history(self):
-        return self.model.get_product_addition_history()
     
     def export_excel(self, file_path):
         return self.model.export_to_excel(file_path)
