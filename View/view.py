@@ -23,27 +23,6 @@ class InventoryView(ctk.CTk):
         self.manage_inventory_button = ctk.CTkButton(self, text="Gestão do Estoque", command=self.create_manage_inventory_screen)
         self.manage_inventory_button.pack(pady=10)
 
-        self.history_button = ctk.CTkButton(self, text="Histórico", command=self.create_history_screen)
-        self.history_button.pack(pady=10)
-
-    def create_history_screen(self):
-        self.clear_screen()
-
-        self.title_label = ctk.CTkLabel(self, text="Histórico de Adições de Produtos", font=("Arial", 24))
-        self.title_label.pack(pady=20)
-
-        # Recupera o histórico de adições de produtos do controller
-        history = self.controller.get_product_addition_history()
-
-        # Exibe o histórico na tela
-        for item in history:
-            history_label = ctk.CTkLabel(self, text=f"Produto ID: {item[1]}, Operação: {item[2]}, Data e Hora: {item[3]}")
-            history_label.pack(pady=5)
-
-        self.back_button = ctk.CTkButton(self, text="Voltar", command=self.create_home_screen)
-        self.back_button.pack(pady=10)
-
-
     def create_add_product_screen(self):
         self.clear_screen()
 
@@ -120,13 +99,10 @@ class InventoryView(ctk.CTk):
                     detail_label.bind("<Button-1>", lambda e, text=detail: self.copy_to_clipboard(text))
 
 
-    
     def copy_to_clipboard(self, text):
         self.clipboard_clear()
         self.clipboard_append(text)
         messagebox.showinfo("ID Copiado", f"ID {text} copiado para a área de transferência!")
-
-
 
     def show_remove_product_window(self):
         self.remove_window = ctk.CTkToplevel(self)
@@ -135,10 +111,10 @@ class InventoryView(ctk.CTk):
         self.remove_window.transient(self)  # Define a janela principal como a janela mestra
         self.remove_window.grab_set()  # Impede interação com a janela principal enquanto esta estiver aberta
 
-        self.remove_id_name_label = ctk.CTkLabel(self.remove_window, text="ID ou Nome do Produto:")
-        self.remove_id_name_label.pack(pady=5)
-        self.remove_id_name_entry = ctk.CTkEntry(self.remove_window)
-        self.remove_id_name_entry.pack(pady=5)
+        self.remove_id_label = ctk.CTkLabel(self.remove_window, text="ID do Produto:")
+        self.remove_id_label.pack(pady=5)
+        self.remove_id_entry = ctk.CTkEntry(self.remove_window)
+        self.remove_id_entry.pack(pady=5)
 
         self.remove_quantity_label = ctk.CTkLabel(self.remove_window, text="Quantidade a Retirar:")
         self.remove_quantity_label.pack(pady=5)
@@ -157,14 +133,13 @@ class InventoryView(ctk.CTk):
         self.delete_window.transient(self)  # Define a janela principal como a janela mestra
         self.delete_window.grab_set()  # Impede interação com a janela principal enquanto esta estiver aberta
 
-        self.delete_id_name_label = ctk.CTkLabel(self.delete_window, text="ID ou Nome do Produto:")
-        self.delete_id_name_label.pack(pady=5)
-        self.delete_id_name_entry = ctk.CTkEntry(self.delete_window)
-        self.delete_id_name_entry.pack(pady=5)
+        self.delete_id_label = ctk.CTkLabel(self.delete_window, text="ID do Produto:")
+        self.delete_id_label.pack(pady=5)
+        self.delete_id_entry = ctk.CTkEntry(self.delete_window)
+        self.delete_id_entry.pack(pady=5)
 
         self.delete_confirm_button = ctk.CTkButton(self.delete_window, text="Confirmar", command=self.delete_product)
         self.delete_confirm_button.pack(pady=10)
-
 
 
     def add_product(self):
@@ -186,11 +161,11 @@ class InventoryView(ctk.CTk):
         self.create_manage_inventory_screen()
 
     def remove_product(self):
-        id_or_name = self.remove_id_name_entry.get().strip()
+        id_or_name = self.remove_id_entry.get().strip()
         quantity = self.remove_quantity_entry.get().strip()
 
         if not id_or_name:
-            messagebox.showerror("Erro", "Por favor, preencha o ID ou Nome do produto.")
+            messagebox.showerror("Erro", "Por favor, preencha o ID do produto.")
             return
 
         if not quantity.isdigit():
@@ -203,24 +178,17 @@ class InventoryView(ctk.CTk):
             messagebox.showerror("Erro", "A quantidade a ser retirada deve ser maior do que zero.")
             return
 
-        product = None
-        if id_or_name.isdigit():
-            product = self.controller.get_product_by_id(int(id_or_name))
-        else:
-            product = self.controller.get_product_by_name(id_or_name)
+        product = self.controller.get_product_by_id(id_or_name)
 
         if not product:
-            messagebox.showerror("Erro", "Produto não encontrado.")
+            messagebox.showerror("Erro", "O ID está incorreto.")
             return
 
         if quantity > product[2]:
             messagebox.showerror("Erro", f"A quantidade a ser retirada ({quantity}) é maior do que a quantidade disponível no estoque ({product[2]}).")
             return
 
-        if id_or_name.isdigit():
-            self.controller.subtract_product_quantity_by_id(int(id_or_name), quantity)
-        else:
-            self.controller.subtract_product_quantity(id_or_name, quantity)
+        self.controller.subtract_product_quantity_by_id(id_or_name, quantity)
 
         self.remove_window.destroy()
         self.create_manage_inventory_screen()
@@ -247,20 +215,20 @@ class InventoryView(ctk.CTk):
             
 
     def delete_product(self):
-        id_or_name = self.delete_id_name_entry.get().strip()
+        id_or_name = self.delete_id_entry.get().strip()
 
         if not id_or_name:
-            messagebox.showerror("Erro", "Por favor, preencha o ID ou Nome do produto.")
+            messagebox.showerror("Erro", "Por favor, preencha o ID do produto.")
             return
 
-        if id_or_name.isdigit():
-            self.controller.delete_product_by_id(int(id_or_name))
-        else:
-            self.controller.delete_product(id_or_name)
+        if not id_or_name.isdigit():
+            messagebox.showerror("Erro", "O ID está incorreto.")
+            return
+
+        self.controller.delete_product_by_id(id_or_name)
 
         self.delete_window.destroy()
         self.create_manage_inventory_screen()
-
     def clear_screen(self):
         for widget in self.winfo_children():
             widget.destroy()
