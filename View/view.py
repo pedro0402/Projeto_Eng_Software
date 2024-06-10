@@ -12,6 +12,7 @@ class InventoryView(ctk.CTk):
 
         self.create_home_screen()
 
+
     def create_home_screen(self):
         """Cria a tela inicial com botões para navegação."""
         self.clear_screen()
@@ -25,11 +26,14 @@ class InventoryView(ctk.CTk):
         self.manage_inventory_button = ctk.CTkButton(self, text="Gestão do Estoque", command=self.create_manage_inventory_screen)
         self.manage_inventory_button.pack(pady=10)
 
+
     def create_add_product_screen(self):
         """Cria a tela para adicionar um novo produto."""
         self.clear_screen()
         self.create_form("Adicionar Produto", self.add_product)
 
+        self.back_button = ctk.CTkButton(self, text="Voltar", command=self.create_home_screen)
+        self.back_button.pack(pady=10)
     def create_form(self, button_text, submit_command):
         """Cria um formulário de produto com campos comuns."""
         self.name_label = ctk.CTkLabel(self, text="Nome do Produto:")
@@ -53,8 +57,7 @@ class InventoryView(ctk.CTk):
         self.submit_button = ctk.CTkButton(self, text=button_text, command=submit_command)
         self.submit_button.pack(pady=10)
 
-        self.back_button = ctk.CTkButton(self, text="Voltar", command=self.create_home_screen)
-        self.back_button.pack(pady=10)
+
 
     def validate_quantity(self, new_value):
         """Valida se a quantidade inserida é um número positivo."""
@@ -64,9 +67,12 @@ class InventoryView(ctk.CTk):
         """Cria a tela de gestão de inventário com opções de filtro e listagem de produtos."""
         self.clear_screen()
 
+
         self.create_filter_frame()
         self.create_product_list_frame()
         self.create_action_frame()
+
+
 
     def create_filter_frame(self):
         """Cria a seção de filtro por setor na tela de gestão de inventário."""
@@ -87,10 +93,13 @@ class InventoryView(ctk.CTk):
 
     def create_product_list_frame(self):
         """Cria a lista de produtos na tela de gestão de inventário."""
+
+
         self.products_frame = ctk.CTkFrame(self)
+        self.create_product_list()
         self.products_frame.pack(pady=10, padx=20, fill="both", expand=True)
 
-        self.create_product_list()
+
 
     def create_action_frame(self):
         """Cria a seção de ações na tela de gestão de inventário."""
@@ -106,7 +115,7 @@ class InventoryView(ctk.CTk):
         self.show_export_excel_button()
 
     def create_product_list(self):
-        """Cria a tabela de listagem de produtos."""
+        products = self.controller.get_all_products()
         self.products_table = ctk.CTkScrollableFrame(self.products_frame)
         self.products_table.pack(fill="both", expand=True, padx=10, pady=10)
 
@@ -115,7 +124,15 @@ class InventoryView(ctk.CTk):
             header_label = ctk.CTkLabel(self.products_table, text=header, font=("Arial", 14, "bold"))
             header_label.grid(row=0, column=i, padx=5, pady=5)
 
-        self.update_product_list()
+        for row_num, product in enumerate(products, start=1):
+            for col_num, detail in enumerate(product):
+                if col_num == 2:  # Check if it's the quantity column
+                    if detail == 0:
+                        detail = "Fora de Estoque"  # Replace 0 with "Fora de Estoque"
+                detail_label = ctk.CTkLabel(self.products_table, text=detail, font=("Arial", 12))
+                detail_label.grid(row=row_num, column=col_num, padx=5, pady=5)
+                if col_num == 0:  # ID column
+                    detail_label.bind("<Button-1>", lambda e, text=detail: self.copy_to_clipboard(text))
 
     def update_product_list(self):
         """Atualiza a lista de produtos com base no filtro selecionado."""

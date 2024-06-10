@@ -5,7 +5,7 @@ import logging
 
 class InventoryController:
     def __init__(self, model=None, view=None):
-         
+
         """Inicializa o controlador, conectando o modelo e a visão.
         Permite injeção de dependência para facilitar testes."""
 
@@ -38,10 +38,10 @@ class InventoryController:
         except Exception as e:
             self.logger.error(f"Erro ao adicionar produto: {e}")
             return "Erro ao adicionar produto."
-            
+
     def subtract_product_quantity(self, name, quantity):
         """Subtrai a quantidade de um produto do inventário."""
-        
+
         if not self.validate_quantity(quantity):
             return "Quantidade inválida. Deve ser positiva."
         try:
@@ -62,7 +62,7 @@ class InventoryController:
         except Exception as e:
             self.logger.error(f"Erro ao subtrair produto por ID: {e}")
             return("Erro ao subtrair quantidade.")
-        
+
     def delete_product(self, name):
         """Remove um produto do inventário pelo nome."""
         try:
@@ -72,7 +72,7 @@ class InventoryController:
         except Exception as e:
             self.logger.error(f"Erro ao deletar produto: {e}")
             return "Erro ao deletar produto."
-        
+
     def delete_product_by_id(self, product_id):
         """Remove um produto do inventário pelo ID."""
         try:
@@ -82,7 +82,7 @@ class InventoryController:
         except Exception as e:
             self.logger.error(f"Erro ao deletar por ID: {e}")
             return "Erro ao deletar produto"
-        
+
     def get_all_products(self):
         """Retorna todos os produtos do inventário."""
         try:
@@ -96,11 +96,11 @@ class InventoryController:
 
     def get_product_by_id(self, product_id):
         return self.model.get_product_by_id(product_id)
-    
-    
+
+
     def export_excel(self, file_path):
         return self.model.export_to_excel(file_path)
-    
+
     def run(self):
         """Inicia interface gráfica"""
         try:

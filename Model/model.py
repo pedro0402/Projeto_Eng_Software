@@ -34,6 +34,7 @@ class InventoryModel:
         """
         self.execute_query(query)
 
+
     def execute_query(self, query: str, params: Tuple = ()) -> Optional[sqlite3.Cursor]:
         """Executa uma consulta com parâmetros opcionais."""
         try:
