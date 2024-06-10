@@ -12,52 +12,52 @@ class InventoryView(ctk.CTk):
 
         self.create_home_screen()
 
-
     def create_home_screen(self):
         """Cria a tela inicial com botões para navegação."""
         self.clear_screen()
 
-        self.title_label = ctk.CTkLabel(self, text="STOCK SEC", font=("Arial", 24))
-        self.title_label.pack(pady=20)
+        self.title_label = ctk.CTkLabel(self, text="STOCK SEC", font=("Arial", 36, "bold"), fg_color="#3b8ed0")
+        self.title_label.pack(pady=40)
 
-        self.add_product_button = ctk.CTkButton(self, text="Cadastro de Produtos", command=self.create_add_product_screen)
-        self.add_product_button.pack(pady=10)
+        self.add_product_button = ctk.CTkButton(self, text="Cadastro de Produtos", command=self.create_add_product_screen, fg_color="#4caf50", hover_color="#45a049")
+        self.add_product_button.pack(pady=20)
 
-        self.manage_inventory_button = ctk.CTkButton(self, text="Gestão do Estoque", command=self.create_manage_inventory_screen)
-        self.manage_inventory_button.pack(pady=10)
-
+        self.manage_inventory_button = ctk.CTkButton(self, text="Gestão do Estoque", command=self.create_manage_inventory_screen, fg_color="#f44336", hover_color="#e53935")
+        self.manage_inventory_button.pack(pady=20)
 
     def create_add_product_screen(self):
         """Cria a tela para adicionar um novo produto."""
         self.clear_screen()
         self.create_form("Adicionar Produto", self.add_product)
 
-        self.back_button = ctk.CTkButton(self, text="Voltar", command=self.create_home_screen)
-        self.back_button.pack(pady=10)
+        self.back_button = ctk.CTkButton(self, text="Voltar", command=self.create_home_screen, fg_color="#607d8b", hover_color="#546e7a")
+        self.back_button.pack(pady=20)
+
     def create_form(self, button_text, submit_command):
         """Cria um formulário de produto com campos comuns."""
-        self.name_label = ctk.CTkLabel(self, text="Nome do Produto:")
-        self.name_label.pack(pady=5)
-        self.name_entry = ctk.CTkEntry(self)
-        self.name_entry.pack(pady=5)
+        self.form_frame = ctk.CTkFrame(self)
+        self.form_frame.pack(pady=20)
 
-        self.quantity_label = ctk.CTkLabel(self, text="Quantidade:")
-        self.quantity_label.pack(pady=5)
-        self.quantity_entry = ctk.CTkEntry(self, validate="key", validatecommand=(self.register(self.validate_quantity), "%P"))
-        self.quantity_entry.pack(pady=5)
+        self.name_label = ctk.CTkLabel(self.form_frame, text="Nome do Produto:")
+        self.name_label.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        self.name_entry = ctk.CTkEntry(self.form_frame, width=250)
+        self.name_entry.grid(row=0, column=1, padx=10, pady=5)
 
-        self.sector_label = ctk.CTkLabel(self, text="Setor:")
-        self.sector_label.pack(pady=5)
+        self.quantity_label = ctk.CTkLabel(self.form_frame, text="Quantidade:")
+        self.quantity_label.grid(row=1, column=0, padx=10, pady=5, sticky="w")
+        self.quantity_entry = ctk.CTkEntry(self.form_frame, validate="key", validatecommand=(self.register(self.validate_quantity), "%P"), width=250)
+        self.quantity_entry.grid(row=1, column=1, padx=10, pady=5)
+
+        self.sector_label = ctk.CTkLabel(self.form_frame, text="Setor:")
+        self.sector_label.grid(row=2, column=0, padx=10, pady=5, sticky="w")
 
         self.sector_var = ctk.StringVar(value="Informatica")
         self.sector_options = ["Informatica", "Papelaria", "Ferramentas", "Outros"]
-        self.sector_menu = ctk.CTkOptionMenu(self, values=self.sector_options, variable=self.sector_var)
-        self.sector_menu.pack(pady=5)
+        self.sector_menu = ctk.CTkOptionMenu(self.form_frame, values=self.sector_options, variable=self.sector_var)
+        self.sector_menu.grid(row=2, column=1, padx=10, pady=5)
 
-        self.submit_button = ctk.CTkButton(self, text=button_text, command=submit_command)
-        self.submit_button.pack(pady=10)
-
-
+        self.submit_button = ctk.CTkButton(self, text=button_text, command=submit_command, fg_color="#2196f3", hover_color="#1976d2")
+        self.submit_button.pack(pady=20)
 
     def validate_quantity(self, new_value):
         """Valida se a quantidade inserida é um número positivo."""
@@ -67,19 +67,16 @@ class InventoryView(ctk.CTk):
         """Cria a tela de gestão de inventário com opções de filtro e listagem de produtos."""
         self.clear_screen()
 
-
         self.create_filter_frame()
         self.create_product_list_frame()
         self.create_action_frame()
-
-
 
     def create_filter_frame(self):
         """Cria a seção de filtro por setor na tela de gestão de inventário."""
         self.filter_frame = ctk.CTkFrame(self)
         self.filter_frame.pack(pady=10)
 
-        self.back_button = ctk.CTkButton(self.filter_frame, text="Voltar", command=self.create_home_screen)
+        self.back_button = ctk.CTkButton(self.filter_frame, text="Voltar", command=self.create_home_screen, fg_color="#607d8b", hover_color="#546e7a")
         self.back_button.grid(row=0, column=0, padx=10, pady=10, sticky="w")
 
         self.filter_label = ctk.CTkLabel(self.filter_frame, text="Filtrar por Setor:")
@@ -93,23 +90,19 @@ class InventoryView(ctk.CTk):
 
     def create_product_list_frame(self):
         """Cria a lista de produtos na tela de gestão de inventário."""
-
-
         self.products_frame = ctk.CTkFrame(self)
         self.create_product_list()
         self.products_frame.pack(pady=10, padx=20, fill="both", expand=True)
-
-
 
     def create_action_frame(self):
         """Cria a seção de ações na tela de gestão de inventário."""
         self.action_frame = ctk.CTkFrame(self)
         self.action_frame.pack(pady=10)
 
-        self.remove_button = ctk.CTkButton(self.action_frame, text="Retirar Produto", command=self.show_remove_product_window)
+        self.remove_button = ctk.CTkButton(self.action_frame, text="Retirar Produto", command=self.show_remove_product_window, fg_color="#ff9800", hover_color="#fb8c00")
         self.remove_button.pack(side="left", padx=10)
 
-        self.delete_button = ctk.CTkButton(self.action_frame, text="Excluir Produto", command=self.show_delete_product_window)
+        self.delete_button = ctk.CTkButton(self.action_frame, text="Excluir Produto", command=self.show_delete_product_window, fg_color="#f44336", hover_color="#e53935")
         self.delete_button.pack(side="right", padx=10)
 
         self.show_export_excel_button()
@@ -223,7 +216,7 @@ class InventoryView(ctk.CTk):
 
     def show_export_excel_button(self):
         """Exibe o botão de exportação para Excel."""
-        self.export_button = ctk.CTkButton(self.action_frame, text="Exportar Excel", command=self.export_to_excel)
+        self.export_button = ctk.CTkButton(self.action_frame, text="Exportar Excel", command=self.export_to_excel, fg_color="#009688", hover_color="#00796b")
         self.export_button.pack(side="right", padx=16)
 
     def export_to_excel(self, file_path="inventory.xlsx"):
@@ -273,7 +266,7 @@ class InventoryView(ctk.CTk):
         self.remove_quantity_entry = ctk.CTkEntry(self.remove_window)
         self.remove_quantity_entry.pack(pady=5)
 
-        self.remove_confirm_button = ctk.CTkButton(self.remove_window, text="Confirmar", command=self.remove_product)
+        self.remove_confirm_button = ctk.CTkButton(self.remove_window, text="Confirmar", command=self.remove_product, fg_color="#ff9800", hover_color="#fb8c00")
         self.remove_confirm_button.pack(pady=10)
 
     def show_delete_product_window(self):
@@ -289,7 +282,7 @@ class InventoryView(ctk.CTk):
         self.delete_id_entry = ctk.CTkEntry(self.delete_window)
         self.delete_id_entry.pack(pady=5)
 
-        self.delete_confirm_button = ctk.CTkButton(self.delete_window, text="Confirmar", command=self.delete_product)
+        self.delete_confirm_button = ctk.CTkButton(self.delete_window, text="Confirmar", command=self.delete_product, fg_color="#f44336", hover_color="#e53935")
         self.delete_confirm_button.pack(pady=10)
 
     def clear_screen(self):
